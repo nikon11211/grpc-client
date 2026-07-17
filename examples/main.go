@@ -25,7 +25,7 @@ func main() {
 
 	logger := &CustomLogger{}
 
-	constructor := func(conn *grpc.ClientConn) interface{} {
+	constructor := func(conn *grpc.ClientConn) any {
 		return &ExampleServiceClient{ClientConn: conn}
 	}
 
@@ -38,7 +38,12 @@ func main() {
 	if err != nil {
 		panic(fmt.Sprintf("Failed to create gRPC client: %v", err))
 	}
-	defer client.Close()
+	defer func(client *grpcclient.Client) {
+		err := client.Close()
+		if err != nil {
+			fmt.Printf("Error closing client: %v\n", err)
+		}
+	}(client)
 
 	logger.Info("gRPC client started successfully")
 

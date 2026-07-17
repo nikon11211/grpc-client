@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -89,14 +90,19 @@ func TestNewClientNilLogger(t *testing.T) {
 		Address: "localhost:50051",
 	}
 
-	constructor := func(conn *grpc.ClientConn) interface{} {
+	constructor := func(conn *grpc.ClientConn) any {
 		return conn
 	}
 
 	client, err := New(cfg, nil, constructor)
 	assert.NoError(t, err)
 	assert.NotNil(t, client)
-	defer client.Close()
+	defer func(client *Client) {
+		err := client.Close()
+		if err != nil {
+			fmt.Printf("Error closing client: %v\n", err)
+		}
+	}(client)
 
 	assert.IsType(t, NoopLogger{}, client.logger)
 }
@@ -109,14 +115,19 @@ func TestNewClientWithTracerProvider(t *testing.T) {
 	logger := &mockLogger{}
 	tp := noop.NewTracerProvider()
 
-	constructor := func(conn *grpc.ClientConn) interface{} {
+	constructor := func(conn *grpc.ClientConn) any {
 		return conn
 	}
 
 	client, err := New(cfg, logger, constructor, WithTracerProvider(tp))
 	require.NoError(t, err)
 	require.NotNil(t, client)
-	defer client.Close()
+	defer func(client *Client) {
+		err := client.Close()
+		if err != nil {
+			fmt.Printf("Error closing client: %v\n", err)
+		}
+	}(client)
 
 	assert.Greater(t, logger.infoCount, 0)
 }
@@ -127,14 +138,19 @@ func TestNewClientWithMaxMsgSize(t *testing.T) {
 		MaxCallRecvMsgSize: 1024 * 1024,
 	}
 
-	constructor := func(conn *grpc.ClientConn) interface{} {
+	constructor := func(conn *grpc.ClientConn) any {
 		return conn
 	}
 
 	client, err := New(cfg, NoopLogger{}, constructor)
 	require.NoError(t, err)
 	require.NotNil(t, client)
-	defer client.Close()
+	defer func(client *Client) {
+		err := client.Close()
+		if err != nil {
+			fmt.Printf("Error closing client: %v\n", err)
+		}
+	}(client)
 }
 
 func TestNewClientWithDialOptions(t *testing.T) {
@@ -142,7 +158,7 @@ func TestNewClientWithDialOptions(t *testing.T) {
 		Address: "localhost:50051",
 	}
 
-	constructor := func(conn *grpc.ClientConn) interface{} {
+	constructor := func(conn *grpc.ClientConn) any {
 		return conn
 	}
 
@@ -152,7 +168,12 @@ func TestNewClientWithDialOptions(t *testing.T) {
 
 	require.NoError(t, err)
 	require.NotNil(t, client)
-	defer client.Close()
+	defer func(client *Client) {
+		err := client.Close()
+		if err != nil {
+			fmt.Printf("Error closing client: %v\n", err)
+		}
+	}(client)
 }
 
 func TestClientClose(t *testing.T) {
@@ -161,7 +182,7 @@ func TestClientClose(t *testing.T) {
 			Address: "localhost:50051",
 		}
 
-		constructor := func(conn *grpc.ClientConn) interface{} {
+		constructor := func(conn *grpc.ClientConn) any {
 			return conn
 		}
 
@@ -193,13 +214,18 @@ func TestGetLogger(t *testing.T) {
 		}
 
 		logger := &mockLogger{}
-		constructor := func(conn *grpc.ClientConn) interface{} {
+		constructor := func(conn *grpc.ClientConn) any {
 			return conn
 		}
 
 		client, err := New(cfg, logger, constructor)
 		require.NoError(t, err)
-		defer client.Close()
+		defer func(client *Client) {
+			err := client.Close()
+			if err != nil {
+				fmt.Printf("Error closing client: %v\n", err)
+			}
+		}(client)
 
 		assert.Equal(t, logger, client.GetLogger())
 	})
@@ -216,14 +242,19 @@ func TestClientConnection(t *testing.T) {
 		Address: "localhost:50051",
 	}
 
-	constructor := func(conn *grpc.ClientConn) interface{} {
+	constructor := func(conn *grpc.ClientConn) any {
 		return conn
 	}
 
 	client, err := New(cfg, NoopLogger{}, constructor)
 	require.NoError(t, err)
 	require.NotNil(t, client)
-	defer client.Close()
+	defer func(client *Client) {
+		err := client.Close()
+		if err != nil {
+			fmt.Printf("Error closing client: %v\n", err)
+		}
+	}(client)
 
 	assert.NotNil(t, client.ClientConn)
 }
@@ -234,13 +265,17 @@ func TestNewClientConnectionError(t *testing.T) {
 	}
 
 	logger := &mockLogger{}
-	constructor := func(conn *grpc.ClientConn) interface{} {
+	constructor := func(conn *grpc.ClientConn) any {
 		return conn
 	}
 
 	client, err := New(cfg, logger, constructor)
 	if err == nil {
-		client.Close()
+		err := client.Close()
+		if err != nil {
+			fmt.Printf("Error closing client: %v\n", err)
+			return
+		}
 	}
 }
 

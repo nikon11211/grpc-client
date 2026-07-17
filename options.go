@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type ClientConstructor func(*grpc.ClientConn) interface{}
+type ClientConstructor func(*grpc.ClientConn) any
 
 type ClientOption func(*clientOptions)
 

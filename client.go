@@ -12,7 +12,7 @@ import (
 type Client struct {
 	logger Logger
 	*grpc.ClientConn
-	Client interface{}
+	Client any
 }
 
 func New(cfg *Config, logger Logger, constructor ClientConstructor, opts ...ClientOption) (*Client, error) {
