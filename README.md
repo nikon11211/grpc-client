@@ -10,6 +10,9 @@
   <a href="https://github.com/nikon11211/grpc-client/actions/workflows/test.yaml">
     <img src="https://github.com/nikon11211/grpc-client/actions/workflows/test.yaml/badge.svg" alt="Tests"/>
   </a>
+  <a href="https://codecov.io/gh/nikon11211/logger">
+    <img src="https://codecov.io/gh/nikon11211/logger/branch/main/graph/badge.svg" alt="Coverage"/>
+  </a>
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/>
   </a>
