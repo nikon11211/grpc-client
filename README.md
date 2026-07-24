@@ -10,8 +10,8 @@
   <a href="https://github.com/nikon11211/grpc-client/actions/workflows/test.yaml">
     <img src="https://github.com/nikon11211/grpc-client/actions/workflows/test.yaml/badge.svg" alt="Tests"/>
   </a>
-  <a href="https://codecov.io/gh/nikon11211/logger">
-    <img src="https://codecov.io/gh/nikon11211/logger/branch/main/graph/badge.svg" alt="Coverage"/>
+  <a href="https://codecov.io/gh/nikon11211/grpc-client">
+    <img src="https://codecov.io/gh/nikon11211/grpc-client/branch/main/graph/badge.svg" alt="Coverage"/>
   </a>
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/>
@@ -57,7 +57,7 @@ exampleClient := client.Client.(ExampleServiceClient)
 - Built-in OpenTelemetry tracing support
 - Custom logger interface - bring your own logger
 - Connection lifecycle management with graceful shutdown
-- Message size configuration** for large payloads
+- Message size configuration for large payloads
 - Request timeout support
 
 ### 📊 Observability
@@ -74,7 +74,6 @@ exampleClient := client.Client.(ExampleServiceClient)
 - **Custom dial options for advanced configuration
 - **Nil-safe design with noop logger fallback
 - **Validation of all configuration parameters
-- **100% test coverage
 
 </td>
 </tr>
@@ -258,9 +257,6 @@ go test -race ./...
 // Run with coverage
 go test -coverprofile=coverage.txt ./...
 go tool cover -html=coverage.txt
-
-// Run benchmarks
-go test -bench=. -benchmem
 ```
 
 ## 🤝 Contributing
@@ -282,7 +278,6 @@ MIT License - see [LICENSE](LICENSE) for details.
 Give a ⭐️ if this project helped you! Share it with your team to improve logging across your microservices.
 
 ## 🙏 Acknowledgments
-
 
 - [gRPC-Go](https://google.golang.org/grpc/) - The official Go gRPC implementation
 - [OpenTelemetry](https://opentelemetry.io/) - Distributed tracing standard
