@@ -261,7 +261,7 @@ func TestClientConnection(t *testing.T) {
 
 func TestNewClientConnectionError(t *testing.T) {
 	cfg := &Config{
-		Address: "invalid-address-with-special-chars://",
+		Address: "dns:///\t",
 	}
 
 	logger := &mockLogger{}
@@ -270,13 +270,10 @@ func TestNewClientConnectionError(t *testing.T) {
 	}
 
 	client, err := New(cfg, logger, constructor)
-	if err == nil {
-		err := client.Close()
-		if err != nil {
-			fmt.Printf("Error closing client: %v\n", err)
-			return
-		}
-	}
+	require.Error(t, err)
+	assert.Nil(t, client)
+	assert.Contains(t, err.Error(), "failed to create gRPC client")
+	assert.Greater(t, logger.errorCount, 0)
 }
 
 func TestMockLogger(t *testing.T) {

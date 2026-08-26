@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"errors"
 	"fmt"
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
@@ -19,7 +20,7 @@ func New(cfg *Config, logger Logger, constructor ClientConstructor, opts ...Clie
 	const trace = "grpc.NewClient"
 
 	if cfg == nil {
-		return nil, fmt.Errorf("config is required")
+		return nil, errors.New("config is required")
 	}
 
 	if err := cfg.Validate(); err != nil {
@@ -31,7 +32,7 @@ func New(cfg *Config, logger Logger, constructor ClientConstructor, opts ...Clie
 	}
 
 	if constructor == nil {
-		return nil, fmt.Errorf("client constructor is required")
+		return nil, errors.New("client constructor is required")
 	}
 
 	options := &clientOptions{}
