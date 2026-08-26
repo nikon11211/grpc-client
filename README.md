@@ -13,11 +13,14 @@
   <a href="https://codecov.io/gh/nikon11211/grpc-client">
     <img src="https://codecov.io/gh/nikon11211/grpc-client/branch/main/graph/badge.svg" alt="Coverage"/>
   </a>
+  <a href="https://sonarcloud.io/summary/overall?id=nikon11211_grpc-client">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=nikon11211_grpc-client&metric=coverage" alt="SonarCloud Coverage"/>
+  </a>
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/>
   </a>
   <a href="https://golang.org/">
-    <img src="https://img.shields.io/badge/Go-%3E%3D%201.21-blue" alt="Go Version"/>
+    <img src="https://img.shields.io/badge/Go-%3E%3D%201.26-blue" alt="Go Version"/>
   </a>
 </p>
 
@@ -158,26 +161,10 @@ grpcclient.WithTracerProvider(tp),
 )
 ```
 
-### Distributed Tracing with OpenTelemetry
-
-```go
-import (
-    "go.opentelemetry.io/otel"
-    "go.opentelemetry.io/otel/trace"
-)
-
-func handleOrder(ctx context.Context, orderID string) {
-    tracer := otel.Tracer("order-service")
-    ctx, span := tracer.Start(ctx, "handleOrder")
-    defer span.End()
-    
-    // TraceID and SpanID automatically injected into logs
-    log.InfoCtx(ctx, "Processing order")
-    
-    // All downstream logs will include trace context
-    processPayment(ctx, orderID)
-}
-```
+The `WithTracerProvider` option installs OpenTelemetry interceptors on the
+gRPC connection, so client-side spans are created for every RPC and the
+`TraceContext` propagator carries trace IDs across the wire to the gRPC
+server.
 
 ### With Custom Dial Options
 
@@ -245,19 +232,30 @@ RequestTimeout time.Duration
 }
 ```
 
-## 🧪 Testing
+## 🧪 Testing & Benchmarks
 
-```go
+The library reaches **100.0% statement coverage** (race-enabled, atomic cover
+mode, `examples/` excluded) — the gRPC connection is hidden behind a small
+client-construction hook, so no live server is required.
+
+```bash
 // Run all tests
 go test ./...
 
-// Run with race detection
-go test -race ./...
- 
-// Run with coverage
-go test -coverprofile=coverage.txt ./...
-go tool cover -html=coverage.txt
+// Run with race detection and coverage (excluding examples)
+go test -race -coverprofile=coverage.txt -covermode=atomic $(go list ./... | grep -v /examples)
+go tool cover -func=coverage.txt | tail -3
+
+// Run benchmarks
+go test -bench=. -benchmem -run '^$' .
 ```
+
+| Benchmark                  | What it measures                    |
+|----------------------------|-------------------------------------|
+| `BenchmarkConfigValidate`  | Config validation                   |
+| `BenchmarkWithTracerProvider` | Option application                |
+| `BenchmarkOptionsApply`    | Functional-option application        |
+| `BenchmarkNewClient`       | Full client construction path        |
 
 ## 🤝 Contributing
 
@@ -281,7 +279,6 @@ Give a ⭐️ if this project helped you! Share it with your team to improve log
 
 - [gRPC-Go](https://google.golang.org/grpc/) - The official Go gRPC implementation
 - [OpenTelemetry](https://opentelemetry.io/) - Distributed tracing standard
-- [Logger] - Our companion logging library
 ---
 
 <p align="center">

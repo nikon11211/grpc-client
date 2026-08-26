@@ -1,7 +1,7 @@
 package grpc
 
 import (
-	"fmt"
+	"errors"
 	"time"
 )
 
@@ -21,13 +21,13 @@ func DefaultConfig() Config {
 
 func (c Config) Validate() error {
 	if c.Address == "" {
-		return fmt.Errorf("address is required")
+		return errors.New("address is required")
 	}
 	if c.MaxCallRecvMsgSize < 0 {
-		return fmt.Errorf("max call recv msg size must be non-negative")
+		return errors.New("max call recv msg size must be non-negative")
 	}
 	if c.RequestTimeout < 0 {
-		return fmt.Errorf("request timeout must be non-negative")
+		return errors.New("request timeout must be non-negative")
 	}
 	return nil
 }

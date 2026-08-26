@@ -10,8 +10,15 @@ type Logger interface {
 
 type NoopLogger struct{}
 
-func (n NoopLogger) DebugF(format string, args ...any) {}
-func (n NoopLogger) Debug(msg string)                  {}
-func (n NoopLogger) Info(msg string)                   {}
-func (n NoopLogger) Warn(msg string)                   {}
-func (n NoopLogger) Error(msg string)                  {}
+func (n NoopLogger) DebugF(format string, args ...any) {
+	_ = format
+	_ = args
+}
+
+func (n NoopLogger) Debug(msg string) { _ = msg }
+
+func (n NoopLogger) Info(msg string) { _ = msg }
+
+func (n NoopLogger) Warn(msg string) { _ = msg }
+
+func (n NoopLogger) Error(msg string) { _ = msg }
